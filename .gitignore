@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 仮想環境
+.venv/
+venv/
+
+# エディタ・OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 秘密情報
+.env
