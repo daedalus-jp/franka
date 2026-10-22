@@ -18,6 +18,60 @@
 
   ![PC の Ethernet 設定](docs/pc_ethernet.png)
 
+## 新しい PC のセットアップ（初回のみ）
+
+Windows の WSL2（Ubuntu）上で動かす。`pylibfranka` は Linux 用しかないため、Windows の Python では動かない。
+
+### Windows 側（PowerShell を管理者で開いて実行）
+
+1. WSL2 と Ubuntu を入れる
+   ```powershell
+   wsl --install -d Ubuntu
+   ```
+2. WSL のネットワークを mirrored にする（WSL から PC の Ethernet をそのまま使うため）
+   ```powershell
+   Set-Content -Path "$env:USERPROFILE\.wslconfig" -Value "[wsl2]`nnetworkingMode=mirrored"
+   ```
+3. ロボットから WSL への UDP を許可する
+   ```powershell
+   New-NetFirewallHyperVRule -Name franka-udp -DisplayName "Franka robot UDP" -Direction Inbound -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -Protocol UDP -RemoteAddresses 192.168.100.49 -Action Allow
+   ```
+   グリッパーの状態はロボットから UDP で届く。WSL のファイアウォールは初期設定で受信を止めるので、許可しないと「掴む」で `libfranka: TCP send bytes: I/O error` になる。
+   それでも同じエラーになるときは、WSL への受信をすべて許可する（旧 PC はこの設定で動いていた）:
+   ```powershell
+   Set-NetFirewallHyperVVMSetting -Name '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -DefaultInboundAction Allow
+   ```
+4. WSL を再起動して設定を反映する
+   ```powershell
+   wsl --shutdown
+   ```
+5. 上の「事前準備」のとおり、Ethernet の IP を設定する
+6. Ethernet アダプターの省電力をオフにする（デバイスマネージャー → ネットワーク アダプター → Ethernet のプロパティ）
+   - 電源の管理: 「電力の節約のために、コンピューターでこのデバイスの電源をオフにできるようにする」をオフ
+   - 詳細設定: 「Energy Efficient Ethernet」「Green Ethernet」などをオフ
+
+### WSL（Ubuntu）側
+
+```bash
+sudo apt update && sudo apt install -y git curl
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.bashrc
+
+git clone https://github.com/atsukiwi/franka.git
+cd franka
+uv sync      # Python 3.12 と必要なライブラリを .venv に入れる
+```
+
+### 動作確認
+
+ロボットの C2 ポートと PC を直結してから実行する。
+
+```bash
+ping 192.168.100.49                                  # 通信できるか
+uv run python gripper_test.py                        # ハンドが開閉するか
+uv run python pick_and_place.py --homing --count 1   # 1 往復だけ試す
+```
+
 ## 起動方法
 
 1. Control（四角い箱）の電源を入れる
