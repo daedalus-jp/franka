@@ -41,7 +41,8 @@ python pack_pose.py
 ## オプション
 
 ```
-pip install requests pylibfranka
+uv sync                               # 初回のみ（ライブラリのインストール）
+source .venv/bin/activate             # ターミナルを開くたびに実行
 python pick_and_place.py              # Ctrl+C で止めるまで往復を繰り返す
 python pick_and_place.py --count 3    # 3 往復で終了
 python pick_and_place.py --homing     # 最初にグリッパーを初期化
