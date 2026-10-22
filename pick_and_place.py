@@ -36,10 +36,10 @@ PLACE_TASK_ID = "0_end-move"    # 把持位置 → 置く位置
 
 # 各ステップの間の待ち時間 [秒]（番号は main() のコメントと対応）
 # 移動タスク → ハンド操作（アームが止まるまで待つ）
-WAIT_GO_START_MOVE = 3.0     # 2. start-move → 3. 掴む
-WAIT_GO_END_MOVE = 3.0       # 4. end-move   → 5. 離す
-WAIT_BACK_END_MOVE = 2.6     # 6. end-move   → 7. 掴む
-WAIT_BACK_START_MOVE = 3.0   # 8. start-move → 9. 離す
+WAIT_GO_START_MOVE = 2.0     # 2. start-move → 3. 掴む
+WAIT_GO_END_MOVE = 1.9       # 4. end-move   → 5. 離す
+WAIT_BACK_END_MOVE = 1.9     # 6. end-move   → 7. 掴む
+WAIT_BACK_START_MOVE = 2.0   # 8. start-move → 9. 離す
 # ハンド操作 → 移動タスク（ハンド操作は完了まで待つので 0 でよい）
 WAIT_OPEN = 0.0              # 1. 開く → 2. start-move
 WAIT_GO_GRASP = 0.0          # 3. 掴む → 4. end-move
